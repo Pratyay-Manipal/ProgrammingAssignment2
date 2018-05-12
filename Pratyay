@@ -1,0 +1,48 @@
+##Author@Pratyay
+
+  
+## The function is able to cache potentially time-consuming computations.For
+example, taking the mean of a numeric vector is typically a fast
+operation. However, for a very long vector, it may take too long to
+compute the mean, especially if it has to be computed repeatedly (e.g.
+in a loop). If the contents of a vector are not changing, it may make
+sense to cache the value of the mean so that when we need it again, it
+can be looked up in the cache rather than recomputed.
+
+##The function~makeCacheMatrix has matrix as it"s arguments 
+
+makeCacheMatrix <- function(x = matrix()) {
+ 
+ +makeCacheMatrix <- function(x = matrix()) { 
+ +    inv <- NULL                             # initializing inv as NULL; 
+ +    set <- function(y) {                    # define the set function to assign new 
+ +        x <<- y                             # value of matrix in parent environment
+ +        inv <<- NULL                        # if there is a new matrix, reset inv to NULL
+ +    }
+ +    get <- function() x                     #define the get fucntion - returns value of the matrix argument
+ +    
+ +    setinverse <- function(inverse) inv <<- inverse  #assigns value of inv in parent environment
+ +    getinverse <- function() inv                     #gets the value of inv where called
+ +    list(set = set, get = get, setinverse = setinverse, getinverse = getinverse)  #This is required to refer to function with $ opearator
+ +                                                                               
+  }
+  
+  
+ 
+ +## The aforewritten function computes the inverse of the special "matrix" returned by makeCacheMatrix above.
+ +## If the inverse has already been calculated (and the matrix has not changed),
+ +## then cacheSolve will retrieve the inverse from the cache
+  
+  cacheSolve <- function(x, ...) {
+          # Returning a matrix that is the inverse of 'x'
+ +    inv <- x$getinverse()
+      #is.null() is used to avoid discrepancies due to null data
+ +    if(!is.null(inv)) {
+ +        message("getting cached data")
+ +        return(inv)
+ +    }
+ +    data <- x$get()
+ +    inv <- solve(data, ...)
+ +    x$setinverse(inv)
+ +    inv
+  }
